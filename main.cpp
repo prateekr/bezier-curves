@@ -32,10 +32,10 @@ void myReshape(int w, int h) {
   window.width = w;
   window.height = h;
 
-  glViewport (0,0,window.width,window.height);
+  glViewport (0,0,3,3);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, window.width, 0, window.height);
+  gluOrtho2D(-1.5, 1.5, -1.5, 1.5);
 }
 
 //****************************************************
@@ -50,19 +50,19 @@ void circle() {
    // glEnd();
   }
 
-  //glBegin(GL_LINE);
-  //window.drawLine(Line(Point(0,0,0), Point(100, 100, 0)), 0.001);
+  glBegin(GL_POINTS);
+  //window.drawLine(Line(Point(0,0,0), Point(1, 1, 0)));
     
     //CubicBezier curve = scene->curves.at(0);
-    //window.drawPoints(curve.getPoints(0.001));
-  //glEnd();
+    //window.drawCurve(curve, 0.001f);
+  glEnd();
   
-  glBegin(GL_LINE_LOOP); // Start drawing a line primitive  
-  glVertex3f(-1.0f, -1.0f, 0.0f); // The bottom left corner  
-  glVertex3f(-1.0f, 1.0f, 0.0f); // The top left corner  
-  glVertex3f(1.0f, 1.0f, 0.0f); // The top right corner  
-  glVertex3f(1.0f, -1.0f, 0.0f); // The bottom right corner  
-  glEnd();  
+  //glBegin(GL_LINE_LOOP); // Start drawing a line primitive  
+  //glVertex3f(-1.0f, -1.0f, 0.0f); // The bottom left corner  
+  //glVertex3f(-1.0f, 1.0f, 0.0f); // The top left corner  
+  //glVertex3f(1.0f, 1.0f, 0.0f); // The top right corner  
+  //glVertex3f(1.0f, -1.0f, 0.0f); // The bottom right corner  
+  //glEnd();  
 
 
   //window.drawPoints(curve.getPoints(0.001));
@@ -114,32 +114,57 @@ int asdf(int argc, char *argv[]) {
   return 0;
 }
 
-void Draw() {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_LINES);
-		glVertex3f(0.25, 0.25, 0.0);
-		glVertex3f(0.75, 0.75, 0.0);
-	glEnd();
-	glFlush();
-  glutSwapBuffers();	// swap buffers (we earlier set double buffer)
+// Clears the current window and draws a triangle.
+void display() {
+
+  // Set every pixel in the frame buffer to the current clear color.
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // Drawing is done by specifying a sequence of vertices.  The way these
+  // vertices are connected (or not connected) depends on the argument to
+  // glBegin.  GL_POLYGON constructs a filled polygon.
+  glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+  for (int i = 0; i < 1; i+=4) {
+    glBegin(GL_POLYGON);
+     glColor3f(1, 0, 0);
+      for (int j = i; j < i + 4; j++) {
+        CubicBezier curve = scene->curves.at(j);
+        window.drawCurvePolygonMode(curve, 0.001f);
+      }
+    glEnd();
+  }
+
+  //window.drawLine(Line(Point(0,0,0), Point(1, 1, 0)));
+  //CubicBezier curve = scene->curves.at(0);
+  //window.drawCurve(curve, 0.001f);
+
+  // Flush drawing command buffer to make drawing happen as soon as possible.
+  glFlush();
+  glutSwapBuffers();
 }
 
-void Initialize() {
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-  gluOrtho2D(-3, 3, -3, 3);
-}
+// Initializes GLUT, the display mode, and main window; registers callbacks;
+// enters the main event loop.
+int main(int argc, char** argv) {
+  Parser parser = Parser();
+  parser.parseFile("input files/input1.bez", scene);
+  // Use a single buffered window in RGB mode (as opposed to a double-buffered
+  // window or color-index mode).
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
-int main(int argc, char *argv[]) {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(250, 250);
-	glutInitWindowPosition(200, 200);
-	glutCreateWindow("XoaX.net");
-	Initialize();
-	glutDisplayFunc(Draw);
-	glutMainLoop();
-	return 0;
+  // Position window at (80,80)-(480,380) and give it a title.
+  glutInitWindowPosition(80, 80);
+  glutInitWindowSize(400, 300);
+  glutCreateWindow("A Simple Triangle");
+
+  // Tell GLUT that whenever the main window needs to be repainted that it
+  // should call the function display().
+  glutDisplayFunc(display);
+
+  // Tell GLUT to start reading and processing events.  This function
+  // never returns; the program only exits when the user closes the main
+  // window or kills the process.
+  glutMainLoop();
 }

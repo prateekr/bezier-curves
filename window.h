@@ -27,8 +27,10 @@ class Window {
 
     Window(int height, int width);
     void setPixel(int i, int j,  GLfloat r, GLfloat g, GLfloat b);
-    void drawLine(Line line, float precision);
-    void drawPoints(std::vector<Point> points);
+    void setPoint(float x, float y, float z);
+    void drawLine(Line line);
+    void drawCurveLineMode(BezierCurve curve, float precision);
+    void drawCurvePolygonMode(BezierCurve curve, float precision);
 };
 
 

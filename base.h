@@ -37,10 +37,7 @@ class BezierCurve {
       }
     }
 
-
-    std::vector<Point> getPoints(float precision) {
-      std::vector<Point> line_points;
-      
+    void getPoints(float precision, std::vector<Point> *line_points) {      
       for (float u = 0; u <= 1.0f; u += precision) {
         std::queue<Line> casteljau_lines;
 
@@ -59,9 +56,8 @@ class BezierCurve {
             break;
           }
         }
-        line_points.push_back(line.getPoint(u));
+        line_points->push_back(line.getPoint(u));
       }
-      return line_points;
     }
 };
 
@@ -71,19 +67,6 @@ class CubicBezier : public BezierCurve {
       lines.push_back(Line(p1, p2));
       lines.push_back(Line(p2, p3));
       lines.push_back(Line(p3, p4));
-    }
-};
-
-
-class BezierPatch {
-  public:
-    std::vector<Point> points;
-
-    BezierPatch(Point p1, Point p2, Point p3, Point p4) {
-      points.push_back(p1);
-      points.push_back(p2);
-      points.push_back(p3);
-      points.push_back(p4);
     }
 };
 
