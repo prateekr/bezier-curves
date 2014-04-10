@@ -15,8 +15,7 @@
 #include <GL/glu.h>
 #endif
 
-#include <Eigen/Dense>
-
+#include "Eigen/Dense"
 #include "base.h"
 
 using namespace Eigen;

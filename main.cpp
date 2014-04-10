@@ -1,5 +1,4 @@
 #include <iostream>
-#include <Eigen/Dense>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -15,6 +14,7 @@
 #include <GL/glu.h>
 #endif
 
+#include "Eigen/Dense"
 #include "base.h"
 #include "window.h"
 #include "parser.h"

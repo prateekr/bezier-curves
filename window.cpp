@@ -1,6 +1,5 @@
 #include "window.h"
 
-
 Window::Window(int w,int h) {
   width = w;
   height = h;
