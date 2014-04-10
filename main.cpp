@@ -29,31 +29,20 @@ Scene scene = Scene();
 
 // Clears the current window and draws a triangle.
 void display() {
-  //glClear(GL_COLOR_BUFFER_BIT);
    glClear (GL_COLOR_BUFFER_BIT);
    glColor3f (1.0, 1.0, 1.0);
    glOrtho(-5, 5, -5, 5, -5.0, 5.0);
    //glOrtho(-2.1, 2.1, -2.1, 2.1, -5.0, 5.0); //define left, right, bottom, top, nearVal, farVal
-  // Drawing is done by specifying a sequence of vertices.  The way these
-  // vertices are connected (or not connected) depends on the argument to
-  // glBegin.  GL_POLYGON constructs a filled polygon.
-  glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-  /*
-    glBegin(GL_POINTS);
-    glColor3f(1, 0, 0);
-    for (float u = 0; u <= 1; u+=0.33) {
-      for (float v = 0; v <= 1; v+=0.33) {
-        //Point p = curve->at(u, v);
-        //glVertex3f(p.x(), p.y(), p.z());
-      }
-    }
-    glEnd();
-    */
-  
+
+
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //Fill Mode
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Line Mode
+
   glRotatef(-120, 1.0, 0, 0);
+  //glRotatef(85, 1.0, 1.0, 1.0);
 
   for (int i = 0; i < scene.patches.size(); i++) {
-    window.drawWireMesh(*scene.patches.at(i),1.0f/10.0f);
+    window.drawSurfacePointMode(*scene.patches.at(i),1.0f/10.0f);
   }
   
   //glPopMatrix();

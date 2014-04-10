@@ -11,8 +11,8 @@ void Window::setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
   glVertex2f(x + 0.5, y + 0.5);
 }
 
-void Window::setPoint(float x, float y, float z) {
-  glVertex3f(x, y, z);
+void Window::drawPoint(Point p) {
+  glVertex3f(p.x(), p.y(), p.z());
 }
 
 void Window::drawLine(Line line) {
@@ -39,19 +39,36 @@ void Window::drawCurveLineMode(CubicBezier curve, float precision) {
 
 void Window::drawWireMesh(BezierPatch patch, float precision) {
   glBegin(GL_LINES);
-  for (float u = 0; u <= 1+precision; u+= precision) {
-    for (float v = precision; v <= 1+precision; v+= precision) {
+  for (float u = 0; u <= 1+precision/2; u+= precision) {
+    for (float v = precision; v <= 1+precision/2; v+= precision) {
       Point o = patch.at(u,v-precision), d = patch.at(u,v);
       drawLine(Line(o,d));
     }
   }
   
-  for (float v = 0; v <= 1+precision; v += precision) {
-    for (float u = precision; u <= 1+precision; u+= precision) {
+  for (float v = 0; v <= 1+precision/2; v += precision) {
+    for (float u = precision; u <= 1+precision/2; u+= precision) {
       drawLine(Line(patch.at(u-precision,v),patch.at(u,v)));
     }
   }
+
   glEnd();
+}
 
+void Window::drawSurfacePointMode(BezierPatch patch, float precision) {
+  std::vector<std::vector<Point>> *grid = new std::vector<std::vector<Point>>();
+  patch.getGridPoints(grid, precision);
+  for (int i = 0; i < grid->size()-1; i++) { //rows
+    for (int j = 0; j < grid->at(i).size()-1; j++) { //columns
+      Point ul = grid->at(i+1).at(j), ur = grid->at(i+1).at(j+1);
+      Point ll = grid->at(i).at(j), lr = grid->at(i).at(j+1);
 
+      glBegin(GL_POLYGON);
+      drawPoint(ul);
+      drawPoint(ur);
+      drawPoint(lr);
+      drawPoint(ll);
+      glEnd();
+    }
+  }
 }
