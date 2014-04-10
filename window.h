@@ -29,8 +29,10 @@ class Window {
     void setPixel(int i, int j,  GLfloat r, GLfloat g, GLfloat b);
     void setPoint(float x, float y, float z);
     void drawLine(Line line);
-    void drawCurveLineMode(BezierCurve curve, float precision);
-    void drawCurvePolygonMode(BezierCurve curve, float precision);
+    void drawCurvePointMode(CubicBezier curve, float precision);
+    void drawCurveLineMode(CubicBezier curve, float precision);
+    void drawCurvePolygonMode(CubicBezier curve, float precision);
+    void drawWireMesh(BezierPatch patch, float precision);
 };
 
 

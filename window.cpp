@@ -20,20 +20,37 @@ void Window::drawLine(Line line) {
   glVertex3f(line.destination.x(), line.destination.y(), line.destination.z());
 }
 
-void Window::drawCurveLineMode(BezierCurve curve, float precision) {
-  std::vector<Point> points;
-  curve.getPoints(precision, &points);
-
-  for (int i = 1; i < points.size(); i++) {
-    drawLine(Line(points.at(i-1), points.at(i)));
+void Window::drawCurvePointMode(CubicBezier curve, float precision) {
+  glBegin(GL_POINTS);
+  for (float u = 0; u <= 1; u += precision) {
+    Point p = curve.at(u);
+    glVertex3f(p.x(), p.y(), p.z());
   }
+  glEnd();
 }
 
-void Window::drawCurvePolygonMode(BezierCurve curve, float precision) {
-  std::vector<Point> points;
-  curve.getPoints(precision, &points);
-
-  for (int i = 0; i < points.size(); i++) {
-      glVertex3f(points.at(i).x(), points.at(i).y(), points.at(i).z());
+void Window::drawCurveLineMode(CubicBezier curve, float precision) {
+  glBegin(GL_LINES);
+  for (float u = precision; u <= 1; u += precision) {
+    drawLine(Line(curve.at(u-precision),curve.at(u)));
   }
+  glEnd();
+}
+
+void Window::drawWireMesh(BezierPatch patch, float precision) {
+  glBegin(GL_LINES);
+  for (float u = 0; u <= 1; u+= precision) {
+    for (float v = precision; v <= 1; v+= precision) {
+      Point p = patch.at(u, v);
+      drawLine(Line(patch.at(u,v-precision),patch.at(u,v)));
+    }
+  }
+ 
+  for (float v = 0; v <= 1; v += precision) {
+    for (float u = precision; u <= 1; u+= precision) {
+      Point p = patch.at(u, v);
+      drawLine(Line(patch.at(u-precision,v),patch.at(u,v)));
+    }
+  }
+  glEnd();
 }

@@ -2,10 +2,11 @@
 #define SCENE_H
 
 #include <vector>
+#include "base.h"
 
 class Scene {
   public:
-    std::vector<CubicBezier> curves;
+    std::vector<BezierPatch*> patches;
 
     Scene() { }
 };

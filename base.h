@@ -1,6 +1,8 @@
 #ifndef BASE_H
 #define BASE_H
 
+#include <math.h>
+
 #include <vector>
 #include <queue>
 #include <Eigen/Dense>
@@ -25,49 +27,62 @@ class Line : public Vector3f {
     }
 };
 
-class BezierCurve {
+class CubicBezier {
   public:
-    std::vector<Line> lines;
+    std::vector<Point> *points;
 
-    BezierCurve() { }
+    CubicBezier() { }
 
-    BezierCurve(std::vector<Point> *list) {
-      for (int i = 0; i < list->size() - 1; i++) {
-        lines.push_back(Line(list->at(i), list->at(i+1)));
-      }
+    CubicBezier(std::vector<Point> *list) {
+      points = list;
     }
 
-    void getPoints(float precision, std::vector<Point> *line_points) {      
-      for (float u = 0; u <= 1.0f; u += precision) {
-        std::queue<Line> casteljau_lines;
-
-        for (int i = 1; i < lines.size(); i++) {
-          casteljau_lines.push(Line(lines.at(i-1).getPoint(u),lines.at(i).getPoint(u)));
-        }
-
-        Line line;
-
-        while (casteljau_lines.size() > 1) {
-          Point o = casteljau_lines.front().getPoint(u);
-          casteljau_lines.pop();
-          Point d = casteljau_lines.front().getPoint(u);
-          if (casteljau_lines.size() == 1) {
-            line = Line(o, d);
-            break;
-          }
-        }
-        line_points->push_back(line.getPoint(u));
-      }
-    }
-};
-
-class CubicBezier : public BezierCurve {
-  public:
     CubicBezier(Point p1, Point p2, Point p3, Point p4) {
-      lines.push_back(Line(p1, p2));
-      lines.push_back(Line(p2, p3));
-      lines.push_back(Line(p3, p4));
+      points = new std::vector<Point>();
+      points->push_back(p1);
+      points->push_back(p2);
+      points->push_back(p3);
+      points->push_back(p4);
+    }
+
+    Point at(float u) {
+      Point p = pow(1-u,3) * points->at(0);
+      p += 3*u*pow(1-u,2) * points->at(1);
+      p += 3*pow(u,2)*(1-u) * points->at(2);
+      p += pow(u,3) * points->at(3);
+      return p;
     }
 };
 
+class BezierPatch {
+  public:
+    std::vector<std::vector<Point>> *grid;
+    std::vector<CubicBezier> *curves;
+
+    BezierPatch(std::vector<std::vector<Point>> *g) {
+      grid = g;
+      curves = new std::vector<CubicBezier>();
+
+      for (int i = 0; i < g->size(); i++) {
+        curves->push_back(CubicBezier(g->at(i).at(0),g->at(i).at(1),g->at(i).at(2),g->at(i).at(3)));
+      }
+    }
+
+    void getGrid(std::vector<CubicBezier> *output) {
+      output->push_back(CubicBezier(grid->at(0).at(0),grid->at(0).at(1),grid->at(0).at(2),grid->at(0).at(3)));
+      output->push_back(CubicBezier(grid->at(1).at(0),grid->at(1).at(1),grid->at(1).at(2),grid->at(1).at(3)));
+      output->push_back(CubicBezier(grid->at(2).at(0),grid->at(2).at(1),grid->at(2).at(2),grid->at(2).at(3)));
+      output->push_back(CubicBezier(grid->at(3).at(0),grid->at(3).at(1),grid->at(3).at(2),grid->at(3).at(3)));
+      
+      output->push_back(CubicBezier(grid->at(0).at(0),grid->at(1).at(0),grid->at(2).at(0),grid->at(3).at(0)));
+      output->push_back(CubicBezier(grid->at(0).at(1),grid->at(1).at(1),grid->at(2).at(1),grid->at(3).at(1)));
+      output->push_back(CubicBezier(grid->at(0).at(2),grid->at(1).at(2),grid->at(2).at(2),grid->at(3).at(2)));
+      output->push_back(CubicBezier(grid->at(0).at(3),grid->at(1).at(3),grid->at(2).at(3),grid->at(3).at(3)));  
+    }
+
+    Point at(float u, float v) {
+      Point p0 = curves->at(0).at(u), p1 = curves->at(1).at(u), p2 = curves->at(2).at(u), p3 = curves->at(3).at(u);
+      return CubicBezier(p0,p1,p2,p3).at(v);
+    }
+};
 #endif
