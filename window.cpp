@@ -39,18 +39,19 @@ void Window::drawCurveLineMode(CubicBezier curve, float precision) {
 
 void Window::drawWireMesh(BezierPatch patch, float precision) {
   glBegin(GL_LINES);
-  for (float u = 0; u <= 1; u+= precision) {
-    for (float v = precision; v <= 1; v+= precision) {
-      Point p = patch.at(u, v);
-      drawLine(Line(patch.at(u,v-precision),patch.at(u,v)));
+  for (float u = 0; u <= 1+precision; u+= precision) {
+    for (float v = precision; v <= 1+precision; v+= precision) {
+      Point o = patch.at2(u,v-precision), d = patch.at2(u,v);
+      drawLine(Line(o,d));
     }
   }
- 
-  for (float v = 0; v <= 1; v += precision) {
-    for (float u = precision; u <= 1; u+= precision) {
-      Point p = patch.at(u, v);
-      drawLine(Line(patch.at(u-precision,v),patch.at(u,v)));
+  
+  for (float v = 0; v <= 1+precision; v += precision) {
+    for (float u = precision; u <= 1+precision; u+= precision) {
+      drawLine(Line(patch.at2(u-precision,v),patch.at2(u,v)));
     }
   }
   glEnd();
+
+
 }

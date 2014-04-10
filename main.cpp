@@ -49,6 +49,7 @@ void display() {
     }
     glEnd();
     */
+  
   glRotatef(-120, 1.0, 0, 0);
 
   for (int i = 0; i < scene.patches.size(); i++) {
