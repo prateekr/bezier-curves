@@ -88,7 +88,7 @@ class BezierPatch {
       output->push_back(CubicBezier(grid->at(0).at(3),grid->at(1).at(3),grid->at(2).at(3),grid->at(3).at(3)));  
     }
 
-    Point at2(float u, float v) {
+    Point at(float u, float v) {
       Point output(0,0,0);
       float bern_poly1, bern_poly2;
       for (int i = 0; i <= n; i++) {
