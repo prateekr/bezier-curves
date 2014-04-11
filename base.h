@@ -100,5 +100,15 @@ class BezierPatch {
       }
       return output;
     }
+
+    void getGridPoints(std::vector< std::vector<Point> > *output, float precision) {
+      for (float u = 0; u <= 1+precision/2; u+=precision) {
+        output->push_back(std::vector<Point>());
+        for (float v = 0; v <= 1+precision/2; v+=precision) {
+          output->back().push_back(at(u,v));
+        }
+      }
+    }
+
 };
 #endif
