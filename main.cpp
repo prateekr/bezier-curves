@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Eigen/Dense"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -14,7 +15,6 @@
 #include <GL/glu.h>
 #endif
 
-#include "Eigen/Dense"
 #include "base.h"
 #include "window.h"
 #include "parser.h"
@@ -25,121 +25,63 @@ inline float sqr(float x) { return x*x; }
 using namespace Eigen;
 
 Window window = Window(400, 400);
-Scene *scene = new Scene();
+Scene scene = Scene();
 
+// Clears the current window and draws a triangle.
+void display() {
+  //glClear(GL_COLOR_BUFFER_BIT);
+   glClear (GL_COLOR_BUFFER_BIT);
+   glColor3f (1.0, 1.0, 1.0);
+   glOrtho(-5, 5, -5, 5, -5.0, 5.0);
+   //glOrtho(-2.1, 2.1, -2.1, 2.1, -5.0, 5.0); //define left, right, bottom, top, nearVal, farVal
+  // Drawing is done by specifying a sequence of vertices.  The way these
+  // vertices are connected (or not connected) depends on the argument to
+  // glBegin.  GL_POLYGON constructs a filled polygon.
+  glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+  /*
+    glBegin(GL_POINTS);
+    glColor3f(1, 0, 0);
+    for (float u = 0; u <= 1; u+=0.33) {
+      for (float v = 0; v <= 1; v+=0.33) {
+        //Point p = curve->at(u, v);
+        //glVertex3f(p.x(), p.y(), p.z());
+      }
+    }
+    glEnd();
+    */
+  
+  glRotatef(-120, 1.0, 0, 0);
 
-void myReshape(int w, int h) {
-  window.width = w;
-  window.height = h;
-
-  glViewport (0,0,window.width,window.height);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluOrtho2D(0, window.width, 0, window.height);
-}
-
-//****************************************************
-// Draw a filled circle.  
-//****************************************************
-void circle() {
-  // Draw inner circle
-
-  for (int i = 0; i < 1; i++) {
-    //glBegin(GL_LINES);
-   // window.drawPoints(scene->curves.at(i).getPoints(0.001));
-   // glEnd();
+  for (int i = 0; i < scene.patches.size(); i++) {
+    window.drawWireMesh(*scene.patches.at(i),1.0f/10.0f);
   }
-
-  //glBegin(GL_LINE);
-  //window.drawLine(Line(Point(0,0,0), Point(100, 100, 0)), 0.001);
-    
-    //CubicBezier curve = scene->curves.at(0);
-    //window.drawPoints(curve.getPoints(0.001));
-  //glEnd();
   
-  glBegin(GL_LINE_LOOP); // Start drawing a line primitive  
-  glVertex3f(-1.0f, -1.0f, 0.0f); // The bottom left corner  
-  glVertex3f(-1.0f, 1.0f, 0.0f); // The top left corner  
-  glVertex3f(1.0f, 1.0f, 0.0f); // The top right corner  
-  glVertex3f(1.0f, -1.0f, 0.0f); // The bottom right corner  
-  glEnd();  
-
-
-  //window.drawPoints(curve.getPoints(0.001));
-  //window.drawLine(Line(Point(0,0,0), Point(1, 0, 0)));
-
-}
-
-//****************************************************
-// function that does the actual drawing of stuff
-//***************************************************
-void myDisplay() {
-  glClear(GL_COLOR_BUFFER_BIT);	// clear the color buffer
-
-  glMatrixMode(GL_MODELVIEW);	// indicate we are specifying camera transformations
-  glLoadIdentity();				    // make sure transformation is "zero'd"
-
-  // Start drawing
-  circle();
-
+  //glPopMatrix();
   glFlush();
-  glutSwapBuffers();	// swap buffers (we earlier set double buffer)
+  glutSwapBuffers();
 }
 
-
-
-//****************************************************
-// the usual stuff, nothing exciting here
-//****************************************************
-int asdf(int argc, char *argv[]) {
+// Initializes GLUT, the display mode, and main window; registers callbacks;
+// enters the main event loop.
+int main(int argc, char** argv) {
   Parser parser = Parser();
-  parser.parseFile("input files/input1.bez", scene);
-  
-  //This initializes glut
+  parser.parseFile("input files/input3.bez", &scene);
+  // Use a single buffered window in RGB mode (as opposed to a double-buffered
+  // window or color-index mode).
   glutInit(&argc, argv);
-
-  //This tells glut to use a double-buffered window with red, green, and blue channels 
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
-  //The size and position of the window
-  glutInitWindowSize(window.width, window.height);
-  glutInitWindowPosition(0,0);
-  glutCreateWindow(argv[0]);
+  // Position window at (80,80)-(480,380) and give it a title.
+  glutInitWindowPosition(80, 80);
+  glutInitWindowSize(800, 800);
+  glutCreateWindow("A Simple Triangle");
 
-  glutDisplayFunc(myDisplay);	// function to run when its time to draw something
-  glutReshapeFunc(myReshape);	// function to run when the window gets resized  
-  
-  glutMainLoop();	// infinite loop that will keep drawing and resizing and whatever else
+  // Tell GLUT that whenever the main window needs to be repainted that it
+  // should call the function display().
+  glutDisplayFunc(display);
 
-  return 0;
-}
-
-void Draw() {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_LINES);
-		glVertex3f(0.25, 0.25, 0.0);
-		glVertex3f(0.75, 0.75, 0.0);
-	glEnd();
-	glFlush();
-  glutSwapBuffers();	// swap buffers (we earlier set double buffer)
-}
-
-void Initialize() {
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-  gluOrtho2D(-3, 3, -3, 3);
-}
-
-int main(int argc, char *argv[]) {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(250, 250);
-	glutInitWindowPosition(200, 200);
-	glutCreateWindow("XoaX.net");
-	Initialize();
-	glutDisplayFunc(Draw);
-	glutMainLoop();
-	return 0;
+  // Tell GLUT to start reading and processing events.  This function
+  // never returns; the program only exits when the user closes the main
+  // window or kills the process.
+  glutMainLoop();
 }
