@@ -15,8 +15,8 @@ LIB = libc++
 RM = /bin/rm -f 
 all:main
 
-main: main.o window.o
-	$(CC) $(CFLAGS) -stdlib=$(LIB) -o $@ main.o window.o $(LDFLAGS) 
+main: main.o window.o parser.o
+	$(CC) $(CFLAGS) -stdlib=$(LIB) -o $@ main.o window.o parser.o $(LDFLAGS) 
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -stdlib=$(LIB) -c $< -o $@

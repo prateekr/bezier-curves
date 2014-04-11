@@ -65,7 +65,7 @@ void display() {
 // enters the main event loop.
 int main(int argc, char** argv) {
   Parser parser = Parser();
-  parser.parseFile("input files/input3.bez", &scene);
+  parser.parseFile("input_files/input3.bez", &scene);
   // Use a single buffered window in RGB mode (as opposed to a double-buffered
   // window or color-index mode).
   glutInit(&argc, argv);
