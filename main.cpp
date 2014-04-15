@@ -42,7 +42,8 @@ void display() {
   //glRotatef(85, 1.0, 1.0, 1.0);
 
   for (int i = 0; i < scene.patches.size(); i++) {
-    window.drawSurfacePointMode(*scene.patches.at(i),1.0f/10.0f);
+    window.drawWireMesh(*scene.patches.at(i),0.2f);
+    // window.drawSurfacePointMode(*scene.patches.at(i),1.0f/10.0f);
   }
   
   //glPopMatrix();

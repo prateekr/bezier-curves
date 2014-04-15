@@ -28,11 +28,15 @@ class Window {
     void setPixel(int i, int j,  GLfloat r, GLfloat g, GLfloat b);
     void drawPoint(Point p);
     void drawLine(Line line);
+    void drawTriangle(Point p1, Point p2, Point p3);
     void drawCurvePointMode(CubicBezier curve, float precision);
     void drawCurveLineMode(CubicBezier curve, float precision);
     void drawCurvePolygonMode(CubicBezier curve, float precision);
     void drawWireMesh(BezierPatch patch, float precision);
     void drawSurfacePointMode(BezierPatch patch, float precision);
+    void adaptiveTessellate(BezierPatch patch, float precision, Point uv1, Point uv2, Point uv3);
+    int checkMidpoint(BezierPatch patch, float precision, Point p1, Point p2);
+    void shiftLeft(Point &uv1, Point &uv2, Point &uv3);
 };
 
 #endif
