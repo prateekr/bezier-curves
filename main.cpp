@@ -36,8 +36,8 @@ void init(void) {
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity();
   
-  // gluPerspective(90, 1, -10, 10);
-  // gluLookAt(0,0,-10,0,0,0,0,1,0);
+  // gluPerspective(180, 1, -10, 10);
+  // gluLookAt(0,4.5,0,0,0,0,0,0,1);
   glOrtho(-5, 5, -5, 5, -5.0, 5.0);
   // glRotatef(-120, 1.0, 0, 0);
 
@@ -78,22 +78,42 @@ void keyPressed (int key, int x, int y) {
     exit(0);
   }
   if (key == GLUT_KEY_UP) {
-    glRotatef(rotation_degree, -1, 0, 0);
+    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+      glTranslatef(0,0.5,0);
+    }
+    else {
+      glRotatef(rotation_degree, -1, 0, 0);
+    }
     glClear(GL_COLOR_BUFFER_BIT);
     glutPostRedisplay();
   }
   if (key == GLUT_KEY_DOWN) {
-    glRotatef(rotation_degree, 1, 0, 0);
+    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+      glTranslatef(0,-0.5,0);
+    }
+    else {
+      glRotatef(rotation_degree, 1, 0, 0);
+    }
     glClear(GL_COLOR_BUFFER_BIT);
     glutPostRedisplay();
   }
   if (key == GLUT_KEY_RIGHT) {
-    glRotatef(rotation_degree, 0, 0, 1);
+    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+      glTranslatef(0.5,0,0);
+    }
+    else {
+      glRotatef(rotation_degree, 0, 0, 1);
+    }
     glClear(GL_COLOR_BUFFER_BIT);
     glutPostRedisplay();
   }
   if (key == GLUT_KEY_LEFT) {
-    glRotatef(rotation_degree, 0, 0, -1);
+    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+      glTranslatef(-0.5,0,0);
+    }
+    else {
+      glRotatef(rotation_degree, 0, 0, -1);
+    }
     glClear(GL_COLOR_BUFFER_BIT);
     glutPostRedisplay();
   }
@@ -120,6 +140,10 @@ int main(int argc, char** argv) {
   // Tell GLUT that whenever the main window needs to be repainted that it
   // should call the function display().
   glutDisplayFunc(display);
+
+  if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+    std::cout << "shift" << std::endl;
+  }
 
   // Handle Key Pressing
   // glutKeyboardFunc(keyPressed); // Tell GLUT to use the method "keyPressed" for key presses
