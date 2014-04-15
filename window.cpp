@@ -22,7 +22,6 @@ void Window::drawLine(Line line) {
 }
 
 void Window::drawTriangle(Point p1, Point p2, Point p3) {
-    std::cout << "drawTriangle called" << std::endl;
     glBegin(GL_TRIANGLES);
     glVertex3f(p1.x(), p1.y(), p1.z());
     glVertex3f(p2.x(), p2.y(), p2.z());
@@ -84,7 +83,6 @@ void Window::adaptiveTessellate(BezierPatch patch, float precision, Point uv1, P
   midPoints->push_back(checkMidpoint(patch, precision, uv2, uv3)); // m1
 
   int cracks = 0;
-  std::cout << "========" << std::endl;
   for (int i = 0; i < midPoints->size(); i++) {
     // std::cout << midPoints->at(i) << std::endl;
     cracks += midPoints->at(i);
@@ -134,15 +132,8 @@ int Window::checkMidpoint(BezierPatch patch, float precision, Point uv1, Point u
   Point p1 = patch.at(uv1.x(), uv1.y());
   Point p2 = patch.at(uv2.x(), uv2.y());
   Point midP = patch.at(m.x(), m.y());
-  std::cout << "p1" << std::endl;
-  std::cout << p1 << std::endl;
-  std::cout << "p2" << std::endl;
-  std::cout << p2 << std::endl;
-  std::cout << "midPoint" << std::endl;
-  std::cout << midP << std::endl;
-  Point val = ((p1 + p2) / 2) - midP;
+  Point val = midP - ((p1 + p2) / 2);
   float mag = sqrt(pow(val.x(),2) + pow(val.y(),2) + pow(val.z(),2));
-  std::cout << "mag: " << mag << std::endl;
   return (mag >= precision);
 }
 
