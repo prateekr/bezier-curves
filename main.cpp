@@ -33,13 +33,16 @@ void init(void) {
   glClear (GL_COLOR_BUFFER_BIT);
   glColor3f (1.0, 1.0, 1.0);
 
-  glMatrixMode (GL_MODELVIEW);
+  glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
   
   // gluPerspective(180, 1, -10, 10);
   // gluLookAt(0,4.5,0,0,0,0,0,0,1);
   glOrtho(-5, 5, -5, 5, -5.0, 5.0);
   // glRotatef(-120, 1.0, 0, 0);
+
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity();
 
   //glOrtho(-2.1, 2.1, -2.1, 2.1, -5.0, 5.0); //define left, right, bottom, top, nearVal, farVal
 
@@ -63,9 +66,8 @@ void display() {
 // Key Pressing
 //****************************************************
 
-void keyPressed (int key, int x, int y) {
+void keyPressed (unsigned char key, int x, int y) {
   float rotation_degree = 10.0f;
-
   if (key == 43) { // + is pressed
     std::cout << "asdf" << std::endl;
     glTranslatef(0, 0, 2);
@@ -77,6 +79,11 @@ void keyPressed (int key, int x, int y) {
     glutDestroyWindow ( window_id );
     exit(0);
   }
+}
+
+void keyPressed2 (int key, int x, int y) {
+  float rotation_degree = 10.0f;
+
   if (key == GLUT_KEY_UP) {
     if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
       glTranslatef(0,0.5,0);
@@ -141,13 +148,9 @@ int main(int argc, char** argv) {
   // should call the function display().
   glutDisplayFunc(display);
 
-  if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
-    std::cout << "shift" << std::endl;
-  }
-
   // Handle Key Pressing
-  // glutKeyboardFunc(keyPressed); // Tell GLUT to use the method "keyPressed" for key presses
-  glutSpecialFunc(keyPressed);
+  glutKeyboardFunc(keyPressed); // Tell GLUT to use the method "keyPressed" for key presses
+  glutSpecialFunc(keyPressed2);
 
   // Tell GLUT to start reading and processing events.  This function
   // never returns; the program only exits when the user closes the main
