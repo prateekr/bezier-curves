@@ -29,6 +29,39 @@ void Window::drawTriangle(Point p1, Point p2, Point p3) {
     glEnd();
 }
 
+void Window::drawQuad(Point ul, Point ur, Point lr, Point ll) {
+  Vector3f normal = (ul - ll).cross(lr - ll);
+  if (normal != Point(0,0,0)) {
+    normal.normalize();
+  } else {
+    Vector3f zero_vector(0.0f, 0.0f, 0.0f);
+    Vector3f v1 = ul - ll;
+    Vector3f v2 = lr - ll;
+    if (v1 == zero_vector) {
+      v1 = Point(0.00001, 0.00001, 0.00001);
+    }
+    if (v2 == zero_vector) {
+      v2 = Point(-0.00001, -0.00001, -0.00001);
+    }
+
+    normal = v1.cross(v2);
+    //normal = Vector3f(1,1,1);
+    if (normal != zero_vector) {
+      normal.normalize();
+    } else {
+      normal = Vector3f(1, 0, 0);
+      normal.normalize();
+    }
+  }
+  glBegin(GL_QUADS);
+  glNormal3f(normal.x(), normal.y(), normal.z());
+  glVertex3f(ul.x(), ul.y(), ul.z());
+  glVertex3f(ur.x(), ur.y(), ur.z());
+  glVertex3f(lr.x(), lr.y(), lr.z());
+  glVertex3f(ll.x(), ll.y(), ll.z());
+  glEnd();
+}
+
 void Window::drawCurvePointMode(CubicBezier curve, float precision) {
   glBegin(GL_POINTS);
   for (float u = 0; u <= 1; u += precision) {
@@ -151,13 +184,7 @@ void Window::drawSurfacePointMode(BezierPatch patch, float precision) {
     for (int j = 0; j < grid->at(i).size()-1; j++) { //columns
       Point ul = grid->at(i+1).at(j), ur = grid->at(i+1).at(j+1);
       Point ll = grid->at(i).at(j), lr = grid->at(i).at(j+1);
-
-      glBegin(GL_POLYGON);
-      drawPoint(ul);
-      drawPoint(ur);
-      drawPoint(lr);
-      drawPoint(ll);
-      glEnd();
+      drawQuad(ul, ur, lr, ll);
     }
   }
 }

@@ -29,33 +29,39 @@ Scene scene = Scene();
 int window_id;
 
 
-void init(void) {
-  glClear (GL_COLOR_BUFFER_BIT);
-  glColor3f (1.0, 1.0, 1.0);
+void init()
+{
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// background color
+  //glClearDepth(1.0);			// background depth value
 
-  glMatrixMode (GL_PROJECTION);
+  glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  
-  // gluPerspective(180, 1, -10, 10);
-  // gluLookAt(0,4.5,0,0,0,0,0,0,1);
   glOrtho(-5, 5, -5, 5, -5.0, 5.0);
-  // glRotatef(-120, 1.0, 0, 0);
 
-  glMatrixMode (GL_MODELVIEW);
+  glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  //glOrtho(-2.1, 2.1, -2.1, 2.1, -5.0, 5.0); //define left, right, bottom, top, nearVal, farVal
+  float lpos[] = { 0.0f, 0.0f, -10.0f, 0 };
+  glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //Fill Mode
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Line Mode
+  glEnable(GL_DEPTH_TEST);		// enable hidden surface removal
+  glEnable(GL_LIGHTING);		// enable lighting
+  glEnable(GL_LIGHT0);		// enable
+	
+  // glShadeModel(GL_FLAT);		// flat shading
+  glShadeModel(GL_SMOOTH);		// smooth shading
 
-  //glRotatef(85, 1.0, 1.0, 1.0);
+  glRotatef(270.0f, 1, 0, 0);
+  //glRotatef(180.0f, 1, 0, 0);
+
 }
+
+
 
 void display() {
   for (int i = 0; i < scene.patches.size(); i++) {
-    window.drawWireMesh(*scene.patches.at(i),0.1f);
-    // window.drawSurfacePointMode(*scene.patches.at(i),1.0f/10.0f);
+    //window.drawWireMesh(*scene.patches.at(i),0.1f);
+    window.drawSurfacePointMode(*scene.patches.at(i),1.0f/20.0f);
   }
 
   // glFlush();
@@ -134,7 +140,7 @@ int main(int argc, char** argv) {
   // Use a single buffered window in RGB mode (as opposed to a double-buffered
   // window or color-index mode).
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
   // glMatrixMode(GL_MODELVIEW);
 
