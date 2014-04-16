@@ -41,15 +41,17 @@ void init()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Comment out if you want fill.
+
   float lpos[] = { 0.0f, 0.0f, -10.0f, 0 };
   glLightfv(GL_LIGHT0, GL_POSITION, lpos);
-
+  /*
   glEnable(GL_DEPTH_TEST);		// enable hidden surface removal
   glEnable(GL_LIGHTING);		// enable lighting
   glEnable(GL_LIGHT0);		// enable
 	
   // glShadeModel(GL_FLAT);		// flat shading
-  glShadeModel(GL_SMOOTH);		// smooth shading
+  glShadeModel(GL_SMOOTH);		// smooth shading */
 
   glRotatef(270.0f, 1, 0, 0);
   //glRotatef(180.0f, 1, 0, 0);
@@ -60,8 +62,8 @@ void init()
 
 void display() {
   for (int i = 0; i < scene.patches.size(); i++) {
-    //window.drawWireMesh(*scene.patches.at(i),0.1f);
-    window.drawSurfacePointMode(*scene.patches.at(i),1.0f/20.0f);
+    window.drawWireMesh(*scene.patches.at(i),0.1f);
+    //window.drawSurfacePointMode(*scene.patches.at(i),1.0f/20.0f);
   }
 
   // glFlush();

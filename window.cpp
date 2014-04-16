@@ -22,18 +22,18 @@ void Window::drawLine(Line line) {
 }
 
 void Window::drawTriangle(Point p1, Point p2, Point p3) {
-    glBegin(GL_TRIANGLES);
-    glVertex3f(p1.x(), p1.y(), p1.z());
-    glVertex3f(p2.x(), p2.y(), p2.z());
-    glVertex3f(p3.x(), p3.y(), p3.z());
-    glEnd();
+  glBegin(GL_TRIANGLES);
+  glVertex3f(p1.x(), p1.y(), p1.z());
+  glVertex3f(p2.x(), p2.y(), p2.z());
+  glVertex3f(p3.x(), p3.y(), p3.z());
+  glEnd();
 }
 
 void Window::drawQuad(Point ul, Point ur, Point lr, Point ll) {
   Vector3f normal = (ul - ll).cross(lr - ll);
   if (normal != Point(0,0,0)) {
     normal.normalize();
-  } else {
+  } /*else {
     Vector3f zero_vector(0.0f, 0.0f, 0.0f);
     Vector3f v1 = ul - ll;
     Vector3f v2 = lr - ll;
@@ -52,7 +52,7 @@ void Window::drawQuad(Point ul, Point ur, Point lr, Point ll) {
       normal = Vector3f(1, 0, 0);
       normal.normalize();
     }
-  }
+  }*/
   glBegin(GL_QUADS);
   glNormal3f(normal.x(), normal.y(), normal.z());
   glVertex3f(ul.x(), ul.y(), ul.z());
@@ -80,27 +80,8 @@ void Window::drawCurveLineMode(CubicBezier curve, float precision) {
 }
 
 void Window::drawWireMesh(BezierPatch patch, float precision) {
-  glBegin(GL_LINES);
-  bool adaptive = true;
-  if (adaptive) {
-    adaptiveTessellate(patch, precision, Point(0,0,0), Point(1,1,0), Point(1,0,0));
-    adaptiveTessellate(patch, precision, Point(1,1,0), Point(0,0,0), Point(0,1,0));
-  }
-  else {
-    for (float u = 0; u <= 1+precision/2; u+= precision) {
-      for (float v = precision; v <= 1+precision/2; v+= precision) {
-        Point o = patch.at(u,v-precision), d = patch.at(u,v);
-        drawLine(Line(o,d));
-      }
-    }
-    
-    for (float v = 0; v <= 1+precision/2; v += precision) {
-      for (float u = precision; u <= 1+precision/2; u+= precision) {
-        drawLine(Line(patch.at(u-precision,v),patch.at(u,v)));
-      }
-    }
-  }
-  glEnd();
+  adaptiveTessellate(patch, precision, Point(0,0,0), Point(1,1,0), Point(1,0,0));
+  adaptiveTessellate(patch, precision, Point(1,1,0), Point(0,0,0), Point(0,1,0));
 }
 
 // Pass in the (u,v) coord of the points of the triangle.
