@@ -108,7 +108,7 @@ class BezierPatch {
       output->push_back(CubicBezier(grid->at(0).at(0),grid->at(1).at(0),grid->at(2).at(0),grid->at(3).at(0)));
       output->push_back(CubicBezier(grid->at(0).at(1),grid->at(1).at(1),grid->at(2).at(1),grid->at(3).at(1)));
       output->push_back(CubicBezier(grid->at(0).at(2),grid->at(1).at(2),grid->at(2).at(2),grid->at(3).at(2)));
-      output->push_back(CubicBezier(grid->at(0).at(3),grid->at(1).at(3),grid->at(2).at(3),grid->at(3).at(3)));  
+      output->push_back(CubicBezier(grid->at(0).at(3),grid->at(1).at(3),grid->at(2).at(3),grid->at(3).at(3)));
     }
 
     Point at(float u, float v) {

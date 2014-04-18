@@ -2,10 +2,12 @@
 #include <iostream>
 #include <stdlib.h>
 
-Window::Window(int w,int h) {
+Window::Window(int w,int h, Output o, bool o2) {
   width = w;
   height = h;
   epsilon = 0.01;
+  output = o;
+  out = o2;
 }
 
 void Window::setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
@@ -23,11 +25,6 @@ void Window::drawLine(Line line) {
 }
 
 void Window::drawTriangle(Vertex v1, Vertex v2, Vertex v3) {
-  // Vector3f normal = (p1 - p2).cross(p3 - p2);
-  // if (normal != Point(0,0,0)) {
-  //   normal.normalize();
-  // }
-
   glBegin(GL_TRIANGLES);
   glNormal3f(v1.normal.x(), v1.normal.y(), v1.normal.z());
   glVertex3f(v1.point.x(), v1.point.y(), v1.point.z());
@@ -38,6 +35,19 @@ void Window::drawTriangle(Vertex v1, Vertex v2, Vertex v3) {
   glNormal3f(v3.normal.x(), v3.normal.y(), v3.normal.z());
   glVertex3f(v3.point.x(), v3.point.y(), v3.point.z());
   glEnd();
+
+  if (out) {
+    output.vertices->push_back(v1.point);
+    output.vertices->push_back(v2.point);
+    output.vertices->push_back(v3.point);
+
+    output.normals->push_back(v1.normal);
+    output.normals->push_back(v2.normal);
+    output.normals->push_back(v3.normal);
+    
+    output.faces->push_back(Point(output.index, output.index + 2, 0));
+    output.index += 3;
+  }
 }
 
 void Window::drawQuad(Vertex ul, Vertex ur, Vertex lr, Vertex ll) {
@@ -54,6 +64,21 @@ void Window::drawQuad(Vertex ul, Vertex ur, Vertex lr, Vertex ll) {
   glNormal3f(ll.normal.x(), ll.normal.y(), ll.normal.z());
   glVertex3f(ll.point.x(), ll.point.y(), ll.point.z()); 
   glEnd();
+
+  if (out) {
+    output.vertices->push_back(ul.point);
+    output.vertices->push_back(ur.point);
+    output.vertices->push_back(lr.point);
+    output.vertices->push_back(ll.point);
+
+    output.normals->push_back(ul.normal);
+    output.normals->push_back(ur.normal);
+    output.normals->push_back(lr.normal);
+    output.normals->push_back(ll.normal);
+    
+    output.faces->push_back(Point(output.index, output.index + 3, 0));
+    output.index += 4;
+  }
 }
 
 void Window::drawCurvePointMode(CubicBezier curve, float precision) {

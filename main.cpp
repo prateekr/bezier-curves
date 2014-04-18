@@ -19,12 +19,13 @@
 #include "window.h"
 #include "parser.h"
 #include "scene.h"
+#include "output.h"
 
 inline float sqr(float x) { return x*x; }
 
 using namespace Eigen;
 
-Window window = Window(400, 400);
+Window window;
 Scene scene = Scene();
 int window_id;
 GLuint obj_id;
@@ -33,6 +34,8 @@ bool shading_toggle = 0;
 bool fill_toggle = 0;
 bool gen_adaptive = 0;
 float precision = 0;
+Output outputter;
+bool out = 0;
 
 void init()
 {
@@ -205,12 +208,21 @@ int main(int argc, char** argv) {
   if (argc >= 3) {
     parser.parseFile(argv[1], &scene);
     precision = atof(argv[2]);
-    if (argc == 4) {
-      if (std::string("-a") == argv[3]) {
-        gen_adaptive = 1;
+    if (argc > 3) {
+      for (int i = 3; i < argc; i++) {
+        if (std::string("-a") == argv[i]) {
+          gen_adaptive = 1;
+        }
+        if (std::string("-o") == argv[i]) {
+          std::cout << "output file" << std::endl;
+          outputter = Output(argv[i+1]);
+          out = 1;
+        }
       }
     }
   }
+  window = Window(400, 400, outputter, out);
+
   // Use a single buffered window in RGB mode (as opposed to a double-buffered
   // window or color-index mode).
   glutInit(&argc, argv);
@@ -224,16 +236,21 @@ int main(int argc, char** argv) {
   init();
   createObj();
 
-  // Tell GLUT that whenever the main window needs to be repainted that it
-  // should call the function display().
-  glutDisplayFunc(display);
+  if (!out) {
+    // Tell GLUT that whenever the main window needs to be repainted that it
+    // should call the function display().
+    glutDisplayFunc(display);
 
-  // Handle Key Pressing
-  glutKeyboardFunc(keyPressed); // Tell GLUT to use the method "keyPressed" for key presses
-  glutSpecialFunc(keyPressed2);
+    // Handle Key Pressing
+    glutKeyboardFunc(keyPressed); // Tell GLUT to use the method "keyPressed" for key presses
+    glutSpecialFunc(keyPressed2);
 
-  // Tell GLUT to start reading and processing events.  This function
-  // never returns; the program only exits when the user closes the main
-  // window or kills the process.
-  glutMainLoop();
+    // Tell GLUT to start reading and processing events.  This function
+    // never returns; the program only exits when the user closes the main
+    // window or kills the process.
+    glutMainLoop();
+  }
+  else {
+    outputter.exportFile();
+  }
 }

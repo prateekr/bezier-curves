@@ -17,6 +17,7 @@
 
 #include "Eigen/Dense"
 #include "base.h"
+#include "output.h"
 
 using namespace Eigen;
 
@@ -24,8 +25,11 @@ class Window {
   public:
     int height, width;
     float epsilon; // small value to add to vectors so they aren't 0
+    Output output;
+    bool out; // flag for if we are exporting
 
-    Window(int height, int width);
+    Window() {};
+    Window(int height, int width, Output o, bool o2);
     void setPixel(int i, int j,  GLfloat r, GLfloat g, GLfloat b);
     void drawPoint(Point p);
     void drawLine(Line line);
