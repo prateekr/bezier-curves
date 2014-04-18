@@ -5,6 +5,7 @@
 Window::Window(int w,int h) {
   width = w;
   height = h;
+  epsilon = 0.01;
 }
 
 void Window::setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
@@ -31,9 +32,10 @@ void Window::drawTriangle(Point p1, Point p2, Point p3) {
 
 void Window::drawQuad(Point ul, Point ur, Point lr, Point ll) {
   Vector3f normal = (ul - ll).cross(lr - ll);
-  if (normal != Point(0,0,0)) {
+  normal.normalize();
+  /*if (normal != Point(0,0,0)) {
     normal.normalize();
-  } /*else {
+  } else {
     Vector3f zero_vector(0.0f, 0.0f, 0.0f);
     Vector3f v1 = ul - ll;
     Vector3f v2 = lr - ll;
@@ -54,6 +56,9 @@ void Window::drawQuad(Point ul, Point ur, Point lr, Point ll) {
     }
   }*/
   glBegin(GL_QUADS);
+  if (normal == Vector3f(0,0,0)) {
+    normal = Vector3f(epsilon, epsilon, epsilon);
+  }
   glNormal3f(normal.x(), normal.y(), normal.z());
   glVertex3f(ul.x(), ul.y(), ul.z());
   glVertex3f(ur.x(), ur.y(), ur.z());

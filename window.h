@@ -23,6 +23,7 @@ using namespace Eigen;
 class Window {
   public:
     int height, width;
+    float epsilon; // small value to add to vectors so they aren't 0
 
     Window(int height, int width);
     void setPixel(int i, int j,  GLfloat r, GLfloat g, GLfloat b);
