@@ -43,6 +43,7 @@ void init()
 
   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Comment out if you want fill.
 
+
   float lpos[] = { 0.0f, 0.0f, -10.0f, 0 };
   glLightfv(GL_LIGHT0, GL_POSITION, lpos);
   
@@ -57,7 +58,6 @@ void init()
   //glRotatef(180.0f, 1, 0, 0);
 
 }
-
 
 
 void display() {
@@ -91,6 +91,7 @@ void keyPressed (unsigned char key, int x, int y) {
 
 void keyPressed2 (int key, int x, int y) {
   float rotation_degree = 10.0f;
+  glMatrixMode(GL_PROJECTION);
 
   if (key == GLUT_KEY_UP) {
     if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
@@ -99,8 +100,6 @@ void keyPressed2 (int key, int x, int y) {
     else {
       glRotatef(rotation_degree, -1, 0, 0);
     }
-    glClear(GL_COLOR_BUFFER_BIT);
-    glutPostRedisplay();
   }
   if (key == GLUT_KEY_DOWN) {
     if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
@@ -109,8 +108,6 @@ void keyPressed2 (int key, int x, int y) {
     else {
       glRotatef(rotation_degree, 1, 0, 0);
     }
-    glClear(GL_COLOR_BUFFER_BIT);
-    glutPostRedisplay();
   }
   if (key == GLUT_KEY_RIGHT) {
     if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
@@ -119,8 +116,6 @@ void keyPressed2 (int key, int x, int y) {
     else {
       glRotatef(rotation_degree, 0, 0, 1);
     }
-    glClear(GL_COLOR_BUFFER_BIT);
-    glutPostRedisplay();
   }
   if (key == GLUT_KEY_LEFT) {
     if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
@@ -129,9 +124,9 @@ void keyPressed2 (int key, int x, int y) {
     else {
       glRotatef(rotation_degree, 0, 0, -1);
     }
-    glClear(GL_COLOR_BUFFER_BIT);
-    glutPostRedisplay();
   }
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glutPostRedisplay();
 }
 
 // Initializes GLUT, the display mode, and main window; registers callbacks;
