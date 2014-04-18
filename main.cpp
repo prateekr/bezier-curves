@@ -29,9 +29,10 @@ Scene scene = Scene();
 int window_id;
 GLuint obj_id;
 GLdouble dist = 5;
-GLdouble fov = 45;
 bool shading_toggle = 0;
 bool fill_toggle = 0;
+bool gen_adaptive = 0;
+float precision = 0;
 
 void init()
 {
@@ -60,16 +61,24 @@ void init()
   glLightfv(GL_LIGHT0, GL_SPECULAR, lspec);
   
   GLfloat lpos1[] = { 0.0f, -10.0f, 0.0f, 0 };
-  glLightfv(GL_LIGHT1, GL_POSITION, lpos);
+  glLightfv(GL_LIGHT1, GL_POSITION, lpos1);
   GLfloat ldiff1[] = { 1.0f, 0.3f, 0.6f, 1.0 };
-  glLightfv(GL_LIGHT1, GL_DIFFUSE, ldiff);
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, ldiff1);
   GLfloat lspec1[] = { 0.5f, 0.5f, 0.5f, 1.00 };
-  glLightfv(GL_LIGHT1, GL_SPECULAR, lspec);
+  glLightfv(GL_LIGHT1, GL_SPECULAR, lspec1);
+
+  GLfloat lpos2[] = { -10.0f, 0.0f, 0.0f, 0 };
+  glLightfv(GL_LIGHT2, GL_POSITION, lpos2);
+  GLfloat ldiff2[] = { 1.0f, 0.3f, 0.6f, 1.0 };
+  glLightfv(GL_LIGHT2, GL_DIFFUSE, ldiff2);
+  GLfloat lspec2[] = { 0.5f, 0.5f, 0.5f, 1.00 };
+  glLightfv(GL_LIGHT2, GL_SPECULAR, lspec2);
 
   glEnable(GL_DEPTH_TEST);		// enable hidden surface removal
   glEnable(GL_LIGHTING);		// enable lighting
   glEnable(GL_LIGHT0);		// enable
-  glEnable(GL_LIGHT1);
+  // glEnable(GL_LIGHT1);
+  // glEnable(GL_LIGHT2);
  
   // glRotatef(270.0f, 1, 0, 0);
   //glRotatef(180.0f, 1, 0, 0);
@@ -79,8 +88,12 @@ void createObj() {
   obj_id = glGenLists(1);
   glNewList(obj_id, GL_COMPILE);
   for (int i = 0; i < scene.patches.size(); i++) {
-    // window.drawAdaptive(*scene.patches.at(i),0.1f);
-    window.drawUniform(*scene.patches.at(i),1.0f/10.0f);
+    if (gen_adaptive) {
+      window.drawAdaptive(*scene.patches.at(i), precision); 
+    }
+    else {
+      window.drawUniform(*scene.patches.at(i), precision); 
+    }
   }
   glEndList();
 }
@@ -188,7 +201,16 @@ void keyPressed2 (int key, int x, int y) {
 // enters the main event loop.
 int main(int argc, char** argv) {
   Parser parser = Parser();
-  parser.parseFile("input_files/input3.bez", &scene);
+
+  if (argc >= 3) {
+    parser.parseFile(argv[1], &scene);
+    precision = atof(argv[2]);
+    if (argc == 4) {
+      if (std::string("-a") == argv[3]) {
+        gen_adaptive = 1;
+      }
+    }
+  }
   // Use a single buffered window in RGB mode (as opposed to a double-buffered
   // window or color-index mode).
   glutInit(&argc, argv);
