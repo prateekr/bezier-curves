@@ -28,7 +28,8 @@ Window window = Window(400, 400);
 Scene scene = Scene();
 int window_id;
 GLuint obj_id;
-
+bool shading_toggle = 0;
+bool fill_toggle = 0;
 
 void init()
 {
@@ -42,7 +43,7 @@ void init()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Comment out if you want fill.
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Comment out if you want fill.
 
 
   GLfloat lpos[] = { 0.0f, 0.0f, -10.0f, 0 };
@@ -57,7 +58,7 @@ void init()
   // glEnable(GL_LIGHT1);
 	
   // glShadeModel(GL_FLAT);		// flat shading
-  glShadeModel(GL_SMOOTH);		// smooth shading 
+  // glShadeModel(GL_SMOOTH);		// smooth shading 
 
   // glEnable(GL_FLAT);
   // glShadeModel(GL_FLAT);		// flat shading
@@ -72,8 +73,8 @@ void createObj() {
   obj_id = glGenLists(1);
   glNewList(obj_id, GL_COMPILE);
   for (int i = 0; i < scene.patches.size(); i++) {
-    // window.drawWireMesh(*scene.patches.at(i),0.1f);
-    window.drawSurfacePointMode(*scene.patches.at(i),1.0f/10.0f);
+    window.drawAdaptive(*scene.patches.at(i),0.01f);
+    // window.drawUniform(*scene.patches.at(i),1.0f/10.0f);
   }
   glEndList();
 }
@@ -99,6 +100,29 @@ void keyPressed (unsigned char key, int x, int y) {
   }
   if (key == 45) { // - is pressed
 
+  }
+  if (key == 115) { // s is pressed
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    if (shading_toggle) {
+      glShadeModel(GL_SMOOTH);
+    }
+    else {
+      glShadeModel(GL_FLAT);
+    }
+
+    shading_toggle = !shading_toggle;
+    glutPostRedisplay();
+  }
+  if (key == 119) { // w is pressed
+    if (fill_toggle) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    else {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    fill_toggle = !fill_toggle;
+    glutPostRedisplay();
   }
   if (key == 32) { // If the space key is pressed
     glutDestroyWindow ( window_id );
@@ -142,7 +166,6 @@ void keyPressed2 (int key, int x, int y) {
     }
   }
   glutPostRedisplay();
-  glMatrixMode(GL_MODELVIEW);
 }
 
 // Initializes GLUT, the display mode, and main window; registers callbacks;

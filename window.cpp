@@ -22,17 +22,21 @@ void Window::drawLine(Line line) {
   glVertex3f(line.destination.x(), line.destination.y(), line.destination.z());
 }
 
-void Window::drawTriangle(Point p1, Point p2, Point p3) {
-  Vector3f normal = (p1 - p2).cross(p3 - p2);
-  if (normal != Point(0,0,0)) {
-    normal.normalize();
-  }
+void Window::drawTriangle(Vertex v1, Vertex v2, Vertex v3) {
+  // Vector3f normal = (p1 - p2).cross(p3 - p2);
+  // if (normal != Point(0,0,0)) {
+  //   normal.normalize();
+  // }
 
   glBegin(GL_TRIANGLES);
-  glNormal3f(normal.x(), normal.y(), normal.z());
-  glVertex3f(p1.x(), p1.y(), p1.z());
-  glVertex3f(p2.x(), p2.y(), p2.z());
-  glVertex3f(p3.x(), p3.y(), p3.z());
+  glNormal3f(v1.normal.x(), v1.normal.y(), v1.normal.z());
+  glVertex3f(v1.point.x(), v1.point.y(), v1.point.z());
+
+  glNormal3f(v2.normal.x(), v2.normal.y(), v2.normal.z());
+  glVertex3f(v2.point.x(), v2.point.y(), v2.point.z());
+
+  glNormal3f(v3.normal.x(), v3.normal.y(), v3.normal.z());
+  glVertex3f(v3.point.x(), v3.point.y(), v3.point.z());
   glEnd();
 }
 
@@ -69,7 +73,7 @@ void Window::drawCurveLineMode(CubicBezier curve, float precision) {
   glEnd();
 }
 
-void Window::drawWireMesh(BezierPatch patch, float precision) {
+void Window::drawAdaptive(BezierPatch patch, float precision) {
   adaptiveTessellate(patch, precision, Point(0,0,0), Point(1,1,0), Point(1,0,0));
   adaptiveTessellate(patch, precision, Point(1,1,0), Point(0,0,0), Point(0,1,0));
 }
@@ -93,7 +97,7 @@ void Window::adaptiveTessellate(BezierPatch patch, float precision, Point uv1, P
   }
 
   if (cracks == 0) {
-    drawTriangle(patch.at(uv1.x(), uv1.y()), patch.at(uv2.x(), uv2.y()), patch.at(uv3.x(), uv3.y()));
+    drawTriangle(patch.vertex_at(uv1.x(), uv1.y()), patch.vertex_at(uv2.x(), uv2.y()), patch.vertex_at(uv3.x(), uv3.y()));
   }
   else if (cracks == 1) {
     if (midPoints->at(1) == 1) {
@@ -133,10 +137,10 @@ void Window::adaptiveTessellate(BezierPatch patch, float precision, Point uv1, P
 int Window::checkMidpoint(BezierPatch patch, float precision, Point uv1, Point uv2) {
   assert((uv1.z() + uv2.z()) == 0);
   Point m = (uv1 + uv2) / 2;
-  Point p1 = patch.at(uv1.x(), uv1.y());
-  Point p2 = patch.at(uv2.x(), uv2.y());
-  Point midP = patch.at(m.x(), m.y());
-  Point val = midP - ((p1 + p2) / 2);
+  Vertex v1 = patch.vertex_at(uv1.x(), uv1.y());
+  Vertex v2 = patch.vertex_at(uv2.x(), uv2.y());
+  Vertex midV = patch.vertex_at(m.x(), m.y());
+  Point val = midV.point - ((v1.point + v2.point) / 2);
   float mag = sqrt(pow(val.x(),2) + pow(val.y(),2) + pow(val.z(),2));
   return (mag >= precision);
 }
@@ -148,7 +152,7 @@ void Window::shiftLeft(Point &uv1, Point &uv2, Point &uv3) {
   uv3 = temp;
 }
 
-void Window::drawSurfacePointMode(BezierPatch patch, float precision) {
+void Window::drawUniform(BezierPatch patch, float precision) {
   std::vector< std::vector<Vertex> > *grid = new std::vector< std::vector<Vertex> >();
   patch.getGridPoints(grid, precision);
   for (int i = 0; i < grid->size()-1; i++) { //rows
