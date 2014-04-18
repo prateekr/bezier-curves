@@ -5,6 +5,7 @@
 Window::Window(int w,int h) {
   width = w;
   height = h;
+  epsilon = 0.01;
 }
 
 void Window::setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
@@ -22,10 +23,9 @@ void Window::drawLine(Line line) {
 }
 
 void Window::drawTriangle(Point p1, Point p2, Point p3) {
-  Vector3f normal = (p2 - p1).cross(p3 - p1);
+  Vector3f normal = (p1 - p2).cross(p3 - p2);
   if (normal != Point(0,0,0)) {
     normal.normalize();
-    normal = normal * -1;
   }
 
   glBegin(GL_TRIANGLES);
