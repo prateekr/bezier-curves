@@ -27,6 +27,7 @@ using namespace Eigen;
 Window window = Window(400, 400);
 Scene scene = Scene();
 int window_id;
+GLuint obj_id;
 
 
 void init()
@@ -65,20 +66,24 @@ void init()
 
   // glRotatef(270.0f, 1, 0, 0);
   //glRotatef(180.0f, 1, 0, 0);
-
 }
 
-
-void display() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   // background color
-  
+void createObj() {
+  obj_id = glGenLists(1);
+  glNewList(obj_id, GL_COMPILE);
   for (int i = 0; i < scene.patches.size(); i++) {
     // window.drawWireMesh(*scene.patches.at(i),0.1f);
     window.drawSurfacePointMode(*scene.patches.at(i),1.0f/10.0f);
   }
+  glEndList();
+}
+
+void display() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   // background color
+
+  glCallList(obj_id);
 
   // glFlush();
-  glFinish();
   glutSwapBuffers();
 }
 
@@ -156,6 +161,7 @@ int main(int argc, char** argv) {
   window_id = glutCreateWindow("Teapot");
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
   init();
+  createObj();
 
   // Tell GLUT that whenever the main window needs to be repainted that it
   // should call the function display().
