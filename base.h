@@ -27,6 +27,17 @@ class Line : public Vector3f {
     }
 };
 
+class Vertex {
+  public:
+    Point point;
+    Vector3f normal;
+
+    Vertex(Point p, Vector3f n) {
+      point = p;
+      normal = n;
+    }
+};
+
 class CubicBezier {
   public:
     std::vector<Point> *points;
@@ -51,6 +62,18 @@ class CubicBezier {
       p += 3*pow(u,2)*(1-u) * points->at(2);
       p += pow(u,3) * points->at(3);
       return p;
+    }
+
+    Vector3f deriv_at(float u) {
+      Point p0 = Line(points->at(0), points->at(1)).getPoint(u);
+      Point p1 = Line(points->at(1), points->at(2)).getPoint(u);
+      Point p2 = Line(points->at(2), points->at(3)).getPoint(u);
+
+      Point p3 = Line(p0, p1).getPoint(u);
+      Point p4 = Line(p1, p2).getPoint(u);
+
+      Vector3f du = 3 * (p4 - p3);
+      return du;
     }
 };
 
@@ -101,11 +124,36 @@ class BezierPatch {
       return output;
     }
 
-    void getGridPoints(std::vector< std::vector<Point> > *output, float precision) {
+    Vertex vertex_at(float u, float v) {      
+      Point v_p0 = CubicBezier(grid->at(0).at(0), grid->at(0).at(1), grid->at(0).at(2), grid->at(0).at(3)).at(u);
+      Point v_p1 = CubicBezier(grid->at(1).at(0), grid->at(1).at(1), grid->at(1).at(2), grid->at(1).at(3)).at(u);
+      Point v_p2 = CubicBezier(grid->at(2).at(0), grid->at(2).at(1), grid->at(2).at(2), grid->at(2).at(3)).at(u);
+      Point v_p3 = CubicBezier(grid->at(3).at(0), grid->at(3).at(1), grid->at(3).at(2), grid->at(3).at(3)).at(u);
+
+      Point u_p0 = CubicBezier(grid->at(0).at(0), grid->at(1).at(0), grid->at(2).at(0), grid->at(3).at(0)).at(v);
+      Point u_p1 = CubicBezier(grid->at(0).at(1), grid->at(1).at(1), grid->at(2).at(1), grid->at(3).at(1)).at(v);
+      Point u_p2 = CubicBezier(grid->at(0).at(2), grid->at(1).at(2), grid->at(2).at(2), grid->at(3).at(2)).at(v);
+      Point u_p3 = CubicBezier(grid->at(0).at(3), grid->at(1).at(3), grid->at(2).at(3), grid->at(3).at(3)).at(v);
+ 
+      CubicBezier vcurve = CubicBezier(v_p0, v_p1, v_p2, v_p3);
+      CubicBezier ucurve = CubicBezier(u_p0, u_p1, u_p2, u_p3);
+      Point p = vcurve.at(v);
+
+      Vector3f uderiv = ucurve.deriv_at(u);
+      Vector3f vderiv = vcurve.deriv_at(v);
+
+      Vector3f normal = uderiv.cross(vderiv) * -1;
+      if (normal != Vector3f(0,0,0)) {
+        normal.normalize();
+      }
+      return Vertex(p,normal);
+    }
+
+    void getGridPoints(std::vector< std::vector<Vertex> > *output, float precision) {
       for (float u = 0; u <= 1+precision/2; u+=precision) {
-        output->push_back(std::vector<Point>());
+        output->push_back(std::vector<Vertex>());
         for (float v = 0; v <= 1+precision/2; v+=precision) {
-          output->back().push_back(at(u,v));
+          output->back().push_back(vertex_at(u,v));
         }
       }
     }

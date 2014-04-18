@@ -29,7 +29,7 @@ class Window {
     void drawPoint(Point p);
     void drawLine(Line line);
     void drawTriangle(Point p1, Point p2, Point p3);
-    void drawQuad(Point ul, Point ur, Point lr, Point ll);
+    void drawQuad(Vertex ul, Vertex ur, Vertex lr, Vertex ll);
     void drawCurvePointMode(CubicBezier curve, float precision);
     void drawCurveLineMode(CubicBezier curve, float precision);
     void drawCurvePolygonMode(CubicBezier curve, float precision);
