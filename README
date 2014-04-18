@@ -1,0 +1,19 @@
+Cong Chen cs184-ca SID: 21804180
+Prateek Reddy
+
+Code runs on Mac OSX.
+
+The source code is in the same directory as this file.
+Simply type make clean and then type make.
+
+To run, use as following:
+
+./main file_name precision [-a | -o file_name]
+
+where the command to run is as specified in the specs. -a is the optional flag for adaptive tessellation.
+Likewise, we did the extra credit of outputting to a .OBJ file. As specified in the specs, pass in the parameters:
+
+-o file_name
+
+with file_name after -o and it will output as appropriately. Included in the submission is a sample .OBJ file
+outputted by our program.
