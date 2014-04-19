@@ -214,7 +214,7 @@ int main(int argc, char** argv) {
           gen_adaptive = 1;
         }
         if (std::string("-o") == argv[i]) {
-          std::cout << "output file" << std::endl;
+          std::cout << "Generating OBJ file" << std::endl;
           outputter = Output(argv[i+1]);
           out = 1;
         }

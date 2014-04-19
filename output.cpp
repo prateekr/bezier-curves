@@ -6,7 +6,6 @@ Output::Output(std::string name2) {
   faces = new std::vector<Point>();
   name = name2;
   index = 1;
-  std::cout << name << std::endl;
 }
 
 void Output::exportFile() {

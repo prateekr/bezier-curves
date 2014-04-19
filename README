@@ -5,6 +5,7 @@ Code runs on Mac OSX.
 
 The source code is in the same directory as this file.
 Simply type make clean and then type make.
+(Note: It is configured to machine so some reloading of libraries may be necessary for other machines)
 
 To run, use as following:
 
@@ -17,3 +18,13 @@ Likewise, we did the extra credit of outputting to a .OBJ file. As specified in 
 
 with file_name after -o and it will output as appropriately. Included in the submission is a sample .OBJ file
 outputted by our program.
+
+To verify that our generated OBJ file is correct, we uploaded it to a site that renders (http://webgl-tests.crbs.ucsd.edu/obj-viewer/).
+
+To view the particular file uploaded:
+
+http://webgl-tests.crbs.ucsd.edu/obj-viewer/?model=teapot_final
+
+Note: we do not know how long this link will be valid as we are unfamiliar with this site
+
+
