@@ -10,16 +10,15 @@ else
 endif
 
 STD = c++11
-LIB = libc++
 
 RM = /bin/rm -f 
 all:main
 
 main: main.o window.o parser.o output.o
-	$(CC) $(CFLAGS) -stdlib=$(LIB) -o $@ main.o window.o parser.o output.o $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o $@ main.o window.o parser.o output.o $(LDFLAGS) 
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -stdlib=$(LIB) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean: 
 	$(RM) *.o main

@@ -10,7 +10,7 @@ Output::Output(std::string name2) {
 
 void Output::exportFile() {
   std::ofstream myfile;
-  myfile.open(name);
+  myfile.open(name.c_str());
 
   myfile << "# Exported OBJ file.\n";
 
